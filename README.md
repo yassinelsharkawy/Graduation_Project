@@ -13,12 +13,6 @@ This project aimed to develop a comprehensive multimodal summarization system fo
 3.  **Integrating Components within a RAG Framework:** To leverage Retrieval-Augmented Generation for enhanced summarization.
 4.  **Providing an Accessible User Interface:** To enable researchers to easily utilize this technology.
 
-## Demo Video
-
-A short demonstration of the Multimodal Scientific Paper Summarization Graduation Project system in action is available below:
-
-PolySumm is a research-oriented system for helping readers navigate scientific papers by combining information from text, figures, and tables. The project explores how document structure, specialized multimodal models, and retrieval-augmented generation can work together to produce useful paper summaries and question-answering experiences.
-
 ## Research Motivation
 
 Scientific papers communicate evidence through multiple modalities. Text describes the research question and methodology, figures communicate visual results, and tables contain quantitative comparisons. A text-only summarizer can miss important evidence when these modalities are treated independently or ignored.
@@ -129,7 +123,9 @@ The React frontend connects the research components to an application workflow. 
 
 ## Demonstration
 
-A demonstration video is included in the repository:
+A demonstration video of the Multimodal Scientific Paper Summarization Graduation Project system in action.
+
+PolySumm is a research-oriented system for helping readers navigate scientific papers by combining information from text, figures, and tables. The project explores how document structure, specialized multimodal models, and retrieval-augmented generation can work together to produce useful paper summaries and question-answering experiences.
 
 [//]: # (Placeholder for demo video)
 https://github.com/user-attachments/assets/8098c249-1a95-4532-862e-afe58dbcb282
