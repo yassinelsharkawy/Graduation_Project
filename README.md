@@ -131,7 +131,8 @@ The React frontend connects the research components to an application workflow. 
 
 A demonstration video is included in the repository:
 
-[Watch the PolySumm demonstration](Demo.mp4)
+[//]: # (Placeholder for demo video)
+https://github.com/user-attachments/assets/8098c249-1a95-4532-862e-afe58dbcb282
 
 ## Running the Components
 
