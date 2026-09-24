@@ -1,4 +1,4 @@
-# Multimodal Scientific Paper Summarization
+# PolySumm: A Multimodal Retrieval-Augmented Framework for Scientific Paper Understanding and Summarization
 
 ## Project Overview
 
@@ -17,85 +17,166 @@ This project aimed to develop a comprehensive multimodal summarization system fo
 
 A short demonstration of the Multimodal Scientific Paper Summarization Graduation Project system in action is available below:
 
-[//]: # (Placeholder for demo video)
-https://github.com/user-attachments/assets/8098c249-1a95-4532-862e-afe58dbcb282
+PolySumm is a research-oriented system for helping readers navigate scientific papers by combining information from text, figures, and tables. The project explores how document structure, specialized multimodal models, and retrieval-augmented generation can work together to produce useful paper summaries and question-answering experiences.
 
-### Methodology
-Multimodal Scientific Paper Summarization Graduation Project employs a sophisticated system architecture that combines advanced OCR capabilities with specialized summarization models within a Retrieval-Augmented Generation (RAG) framework. The core methodology involves:
+## Research Motivation
 
-*   **Multimodal Data Extraction:** Utilizing PaddleOCR to process scientific PDFs, extracting text, identifying figures, and recognizing table structures. The extracted data is then outputted in a structured JSON format.
-*   **Data Preprocessing:** The structured JSON data undergoes rigorous preprocessing, including semantic chunking and embedding generation, before being fed into the RAG pipeline.
-*   **Distinct Summarization Approaches:** The system employs different summarization techniques tailored to each content type:
-    *   **Text Summarization:** Achieved using transformer-based models.
-    *   **Figure Description:** Handled by vision-language models.
-    *   **Tabular Data Summarization:** Performed by specialized table-to-text models.
-*   **User Interface:** A React-based frontend allows users to upload scientific papers and view the generated multimodal summaries.
-*   **Comparative Evaluation:** To validate our approach, we implemented and compared two RAG pipelines: a custom system utilizing in-house summarization models and a second system relying on external APIs (specifically, Azure OpenAI).
+Scientific papers communicate evidence through multiple modalities. Text describes the research question and methodology, figures communicate visual results, and tables contain quantitative comparisons. A text-only summarizer can miss important evidence when these modalities are treated independently or ignored.
 
-### Achievements
-The project successfully delivered an effective multimodal scientific paper summarization system. Key achievements include:
+PolySumm addresses this problem with a modular pipeline that extracts scientific documents, processes each modality with a suitable model, and exposes the resulting information through summarization and question-answering services.
 
-*   **Implementation of Two RAG Pipelines:** A custom-built system with in-house summarization models and an API-based system via Azure OpenAI.
-*   **Superior Performance of Custom System:** The custom system demonstrated higher accuracy, better integration of figures and tables, faster inference times, and lower resource usage. This makes it particularly well-suited for domain-specific tasks requiring deep multimodal understanding.
-*   **Validation of Tailored Approach:** The custom RAG pipeline consistently outperformed the API-based system in terms of accuracy, efficiency, and content completeness, validating the benefits of a tailored, modality-aware summarization approach for scientific documents.
+## What This Repository Implements
 
-## Key Features
+- PDF processing and structured extraction of text, figures, and tables
+- Modality-specific summarization components for scientific documents
+- PEGASUS-based text summarization service
+- Vision-language figure captioning service using a PaliGemma model and a local PEFT adapter
+- Table summarization service using Qwen2-VL-2B-Instruct
+- A custom Retrieval-Augmented Generation (RAG) pipeline
+- An Azure OpenAI-based RAG pipeline for comparison and experimentation
+- ChromaDB-backed vector retrieval and document metadata handling
+- FastAPI services for ingestion, summarization, and question answering
+- A React frontend for uploading papers, monitoring processing, reviewing results, and chatting with documents
 
-*   **Multimodal Summarization:** Summarizes scientific papers by integrating information from text, figures, and tables.
-*   **PDF Processing:** Robust pipeline for extracting structured content from PDF documents.
-*   **Advanced OCR:** Leverages PaddleOCR for accurate text, figure, and table recognition.
-*   **Retrieval-Augmented Generation (RAG):** Enhances summarization quality by retrieving relevant information.
-*   **Specialized Models:** Utilizes transformer-based models for text, vision-language models for figures, and table-to-text models for tables.
-*   **User-Friendly Interface:** Intuitive React-based frontend for easy paper uploads and summary viewing.
-*   **Comparative Analysis:** Provides insights into the performance of custom vs. API-based RAG implementations.
+## System Architecture
 
-## Technologies Used
+```text
+Scientific Paper in a PDF Format
+         |
+         v
+Paper Extraction and Layout Analysis
+         |
+         +------------------+------------------+
+         |                  |                  |
+     Text              Figures             Tables
+         |                  |                  |
+ PEGASUS       PaliGemma + PEFT       Qwen2-VL
+         |                  |                  |
+         +------------------+------------------+
+                                                |
+                                                v
+                    Structured Multimodal Representation
+                                                |
+                                                v
+             Chunking, Embeddings, and Vector Retrieval
+                                                |
+                         +----------+----------+
+                         |                     |
+             Custom RAG             Azure OpenAI RAG
+                         |                     |
+                         +----------+----------+
+                                                |
+                                                v
+                Summaries, Answers, and Source Context
+                                                |
+                                                v
+                                 React Frontend
+```
 
-*   **Frontend:** React
-*   **OCR:** PaddleOCR
-*   **Natural Language Processing (NLP):** Transformer-based models (for text summarization), Vision-Language Models (for figure summarization), Table-to-Text Models (for table summarization)
-*   **Backend/Framework:** Retrieval-Augmented Generation (RAG)
-*   **Optional Integration:** Azure OpenAI
+## Research and Engineering Contributions
 
-### Detailed Methodology
+### 1. Modality-aware document processing
 
-#### Data Extraction and Preprocessing
-Our system leverages **PaddleOCR** for robust multimodal data extraction from scientific PDFs. This involves:
-*   **PDF Processing:** Handling various PDF structures and layouts.
-*   **Layout Analysis:** Identifying different content blocks such as text paragraphs, figures, and tables.
-*   **Text Recognition:** Accurately extracting text from all identified blocks.
-*   **Table and Figure Extraction:** Specifically recognizing and extracting structured data from tables and visual information from figures.
-The extracted data is then converted into a structured JSON format, which serves as the input for the subsequent processing steps. This structured data undergoes a crucial preprocessing phase, including **semantic chunking** to break down content into meaningful units and **embedding generation** to create vector representations for efficient retrieval within the RAG pipeline.
+The repository separates text, figures, and tables during PDF processing. This creates a structured representation that can preserve information that would otherwise be lost in a plain-text conversion.
 
-#### Summarization Modules
-Multimodal Scientific Paper Summarization Graduation Project integrates several specialized summarization modules, each tailored to a specific data modality:
-*   **Figure Summarization:** Utilizes **Vision-Language Models (VLMs)** to generate descriptive summaries of figures, capturing key visual information and its relevance to the paper's content.
-*   **Table Summarization:** Employs **Table-to-Text Models** to convert structured tabular data into coherent natural language summaries, highlighting important trends, comparisons, or findings within the tables.
-*   **Text Summarization:** Relies on **transformer-based models**, such as **PEGASUS**, for generating abstractive summaries of textual content, ensuring conciseness and information retention.
-*   **Topic Classification Model:** An integrated model helps in classifying the topic of the paper, which can further refine the summarization process by focusing on domain-specific aspects.
+### 2. Specialized model selection
 
-#### RAG System Core
-The Retrieval-Augmented Generation (RAG) framework is central to Multimodal Scientific Paper Summarization Graduation Project's ability to produce comprehensive and contextually relevant summaries. The RAG integration involves:
-*   **Retrieval Strategy:** Based on user queries or the context of the document, relevant chunks of multimodal data (text, figure descriptions, table summaries) are retrieved from the processed document embeddings.
-*   **Generation Process:** The retrieved information is then fed into a powerful language model, which generates the final summary, ensuring that it is grounded in the original document's content.
-*   **Combining Multimodal Summaries:** A sophisticated mechanism combines the summaries generated from different modalities into a single, cohesive, and informative overall summary.
+Each modality is handled by a model or service suited to its representation:
 
-### Comparative Analysis: Custom vs. API-Based RAG Systems
-During development, two distinct RAG pipelines were implemented and rigorously evaluated:
-1.  **Custom-Built System:** This system utilizes in-house developed or fine-tuned summarization models for each modality. It demonstrated superior performance in terms of accuracy, deeper integration of figures and tables, faster inference times, and lower resource consumption. This approach proved ideal for achieving domain-specific accuracy and detailed multimodal understanding.
-2.  **API-Based System (Azure OpenAI):** This system leveraged external APIs, specifically Azure OpenAI, for its summarization capabilities. While offering fluent generation and quick setup, it exhibited limitations in deep multimodal understanding and integration compared to the custom solution.
+- **Text:** PEGASUS-based abstractive summarization
+- **Figures:** PaliGemma-based image captioning with a local PEFT adapter
+- **Tables:** Qwen2-VL image-to-text summarization
 
-The comprehensive evaluation confirmed that the custom RAG pipeline significantly outperformed the API-based counterpart in accuracy, efficiency, and content completeness, underscoring the benefits of a tailored, modality-aware approach for scientific paper summarization.
+This design makes the pipeline modular and allows individual components to be evaluated or replaced independently.
 
-## Future Work
+### 3. Retrieval-grounded interaction
 
-Potential future enhancements for Multimodal Scientific Paper Summarization Graduation Project include:
-*   Exploring more advanced multimodal fusion techniques.
-*   Expanding support for additional document formats and content types.
-*   Developing interactive summarization features.
-*   Further optimization for real-time processing and deployment in various environments.
-*   Investigating techniques to improve OCR accuracy, particularly for complex tables, formulas, and diverse layouts, or incorporating methods to handle OCR uncertainty downstream.
-*   Extending the system to take multiple related papers as input and produce a coherent, unified summary that highlights cross-paper themes, differences, and aggregated findings—useful for survey articles or literature reviews.
-*   Adapting OCR and summarization pipelines to process papers in languages other than English, including cross-lingual summarization.
-*   Incorporating user profiles or feedback loops to tailor summaries to individual reading styles, preferred level of technical detail, or specific interests (e.g., methodology vs. results).
-*   Setting up an online learning framework where user corrections or validations feed back into model fine-tuning, gradually improving performance over time.
+The RAG services ingest scientific papers, create retrievable chunks and embeddings, and use relevant document context when answering questions or generating summaries. The OpenAI RAG implementation also exposes methodology-oriented question answering and source-aware document interaction through a FastAPI API.
+
+### 4. Comparative system design
+
+The repository contains both a custom RAG implementation and an Azure OpenAI-based implementation. Keeping these paths separate provides a practical basis for studying trade-offs among model ownership, deployment requirements, retrieval design, and generation quality.
+
+### 5. Research prototype to usable interface
+
+The React frontend connects the research components to an application workflow. It includes routes for paper upload, processing, results, document chat, and project information, making the system suitable for demonstrations and continued experimentation.
+
+## Repository Structure
+
+| Directory | Purpose |
+| --- | --- |
+| `Paper-Extractor/` | PDF upload API and document extraction pipeline |
+| `Summarization_Model/` | PEGASUS-based scientific text summarization API |
+| `Figure_Summarization/` | Figure captioning service using PaliGemma and PEFT |
+| `Table_Summarization/` | Table summarization service using Qwen2-VL |
+| `Working_RAG/` | Custom RAG implementation and supporting modules |
+| `OpenAI_RAG/` | FastAPI RAG system using Azure OpenAI and ChromaDB |
+| `Paper_Classification/` | Scientific paper classification experiments |
+| `Frontend/` | React client for the PolySumm workflow |
+| `Documentation/` | Project documentation and supporting material |
+| `PolySumm-Demo.mp4` | Project demonstration video |
+
+## Technology Stack
+
+- **Frontend:** React, React Router, Bootstrap, Axios, Framer Motion
+- **Backend APIs:** Python, FastAPI, Uvicorn, Pydantic
+- **Document processing:** PyMuPDF, PyPDF2, PDF-to-image utilities, PaddleOCR-related tooling
+- **Language models:** PEGASUS, transformer-based models, Azure OpenAI
+- **Vision-language models:** PaliGemma and Qwen2-VL
+- **Parameter-efficient adaptation:** PEFT adapters for the figure captioning component
+- **Retrieval:** LangChain, ChromaDB, embeddings, semantic chunking
+- **Data and image processing:** NumPy, pandas, Pillow, PyTorch
+
+## Demonstration
+
+A demonstration video is included in the repository:
+
+[Watch the PolySumm demonstration](Demo.mp4)
+
+## Running the Components
+
+The repository is organized as several independently runnable services rather than one single package. Each major component contains its own Docker or dependency configuration where applicable.
+
+### OpenAI RAG service
+
+```bash
+cd OpenAI_RAG
+pip install -r requirements.txt
+python start.py
+```
+
+The service provides FastAPI documentation at `http://localhost:8000/docs` when it is running. Azure OpenAI configuration is supplied through environment variables; consult `OpenAI_RAG/README.md` for the available settings and endpoints.
+
+### React frontend
+
+```bash
+cd Frontend
+npm install
+npm start
+```
+
+The frontend is based on Create React App and runs at `http://localhost:3000` by default.
+
+### Other services
+
+The extraction, text summarization, figure summarization, table summarization, and custom RAG components have separate entry points and dependency files. Their local setup details are documented in the corresponding directory.
+
+## Current Scope and Reproducibility Notes
+
+This repository represents a graduation-project research prototype. Model loading may require substantial memory, a compatible GPU, downloaded model weights, and credentials for external services. Results can depend on model versions, hardware, prompts, and runtime configuration.
+
+The repository documents implemented components and intended experiments; it does not claim a universal benchmark result. Quantitative comparisons should be reproduced with a defined dataset, evaluation protocol, and fixed hardware and model settings before drawing general conclusions.
+
+## Future Research Directions
+
+- Evaluate each modality and the complete pipeline with reproducible datasets and metrics.
+- Study multimodal fusion strategies for combining textual, visual, and tabular evidence.
+- Improve handling of mathematical notation, complex layouts, and OCR uncertainty.
+- Support multi-paper synthesis for literature reviews and survey preparation.
+- Investigate cross-lingual scientific document processing.
+- Add user feedback and controllable summary depth while preserving source grounding.
+- Improve deployment efficiency and reduce memory requirements for local inference.
+
+## Project Context
+
+PolySumm was developed as a graduation project focused on multimodal document understanding, scientific text summarization, and retrieval-augmented generation. The repository is intended to support technical review, reproducible experimentation, and future research development.
